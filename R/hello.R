@@ -94,7 +94,7 @@ prepare_data <- function(the_data,
 #' @param y_breaks location of major ticks on the y axis
 #' @param seconds_offset offset in seconds for adjusting the log y-axis
 #' @param y_axis 'linear' or 'log' (base 10) y-axis
-#' @param one_day the date of a single day, to limit the plot to one day or more days. Use the form "2013-01-26" with quotation marks, or make a vector with `c("2013-01-26", "2013-01-27")`
+#' @param days the date of a single day, to limit the plot to one day or more days. Use the form "2013-01-26" with quotation marks, or make a vector with `c("2013-01-26", "2013-01-27")`
 #' @param ... so you can send other things to modify the theme and scales
 #' @export
 #
@@ -174,7 +174,7 @@ smps_plot <- function(the_prepared_data,
     # draw the plot with linear y-axis
 
 
-    require(ggplot2)
+    requireNamespace(ggplot2)
     the_plot <- ggplot(data_to_plot, aes(y = Diameter,
                                               x = Time,
                                               fill = dN_dlogDp_log)) +
@@ -214,7 +214,7 @@ smps_plot <- function(the_prepared_data,
       data_to_plot$ymax <- unlist(lapply(upper, function(i) rep(i, idx)))
 
       # draw the plot
-      require(scales)
+      requireNamespace(scales)
       the_plot <- ggplot(data_to_plot, aes(y = Diameter, x = Time,
                                                 xmin=xmin, xmax=xmax,
                                                 ymin=ymin, ymax=ymax,
@@ -311,7 +311,7 @@ fill_scale_labels <- function(x) {
 #' @export
 #'
 get_legend <- function(the_ggplot){
-  require(gridExtra)
+  requireNamespace(gridExtra)
     tmp <- ggplot_gtable(ggplot_build(the_ggplot))
     leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
     legend <- tmp$grobs[[leg]]

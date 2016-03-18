@@ -24,8 +24,8 @@ smps_plot(the_prepared_data, aspect_ratio = 1.1/5, font_size = 12,
 
 \item{seconds_offset}{offset in seconds for adjusting the log y-axis}
 
-\item{...}{so you can send other things to modify the theme and scales}
+\item{days}{the date of a single day, to limit the plot to one day or more days. Use the form "2013-01-26" with quotation marks, or make a vector with `c("2013-01-26", "2013-01-27")`}
 
-\item{one_day}{the date of a single day, to limit the plot to one day or more days. Use the form "2013-01-26" with quotation marks, or make a vector with `c("2013-01-26", "2013-01-27")`}
+\item{...}{so you can send other things to modify the theme and scales}
 }
 
