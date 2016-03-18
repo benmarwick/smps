@@ -12,7 +12,7 @@ output:
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "README-",
+  fig.path = "figures/README-",
   cache = FALSE, 
   messages = FALSE
 )

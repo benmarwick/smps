@@ -49,10 +49,9 @@ Third, plot the data, like so:
 
 ``` r
 smps_plot(prepared_data)
-#> Loading required package: ggplot2
 ```
 
-![](README-unnamed-chunk-5-1.png)<!-- -->
+![](figures/README-unnamed-chunk-5-1.png)<!-- -->
 
 We can plot a data from a single day:
 
@@ -61,24 +60,21 @@ smps_plot(prepared_data, day = "2013-01-26")
 #> Warning: Removed 743906 rows containing missing values (geom_raster).
 ```
 
-![](README-unnamed-chunk-6-1.png)<!-- -->
+![](figures/README-unnamed-chunk-6-1.png)<!-- -->
 
 We can also have a log scale on the y-axis:
 
 ``` r
 smps_plot(prepared_data, y_axis = "log")
-#> Loading required package: scales
 #> Warning: Removed 8630 rows containing missing values (geom_rect).
 ```
 
-![](README-unnamed-chunk-7-1.png)<!-- -->
+![](figures/README-unnamed-chunk-7-1.png)<!-- -->
 
 We can customise a variety of options, including the colour ramp:
 
 ``` r
 require(viridis)
-#> Loading required package: viridis
-#> Warning: package 'viridis' was built under R version 3.2.4
 smps_plot(prepared_data, 
           font_size = 9, 
           h = '3 hours',
@@ -87,7 +83,7 @@ smps_plot(prepared_data,
           colour_ramp = viridis) 
 ```
 
-![](README-unnamed-chunk-8-1.png)<!-- -->
+![](figures/README-unnamed-chunk-8-1.png)<!-- -->
 
 Because the output is a ggplot object, we can add typical ggplot elements to it like a regular `ggplot()` call:
 
@@ -96,7 +92,7 @@ smps_plot(prepared_data, font_size = 8) +
   theme(legend.key.size = unit(0.1, "in") )
 ```
 
-![](README-unnamed-chunk-9-1.png)<!-- -->
+![](figures/README-unnamed-chunk-9-1.png)<!-- -->
 
 With `gridExtra` we can stack a few plots together, and arrange a common legend to the side:
 
@@ -123,6 +119,6 @@ grid.arrange(the_plots[[1]], the_plots[[2]], the_plots[[3]], the_legend, layout_
 #> Warning: Removed 754262 rows containing missing values (geom_rect).
 ```
 
-![](README-unnamed-chunk-10-1.png)<!-- -->
+![](figures/README-unnamed-chunk-10-1.png)<!-- -->
 
 Please note that this project is released with a [Guide to Contributing](CONTRIBUTING.md) and a [Contributor Code of Conduct](CONDUCT.md). By participating in this project you agree to abide by its terms.
