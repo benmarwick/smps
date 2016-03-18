@@ -14,5 +14,5 @@ Depends: R (>= 3.2.0)
 Imports: ggplot2,
     tidyr,
     scales,
-    akima
-Suggests: gridExtra
+    akima,
+    gridExtra
