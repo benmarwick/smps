@@ -1,11 +1,15 @@
 Package: smps
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Plots Scanning Mobility Particle Sizer Spectrometer (SMPS) data
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
+Author: Ben Marwick and Doreena Doreena Dominick
+Maintainer: Ben Marwick <benmarwick@gmail.com>
+Description: Plots Scanning Mobility Particle Sizer Spectrometer (SMPS) data
 License: MIT + file LICENSE
 LazyData: TRUE
 URL: https://github.com/benmarwick/smps
 BugReports: https://github.com/benmarwick/smps/issues
+RoxygenNote: 5.0.1
+Imports: ggplot2,
+    tidyr,
+    scales
