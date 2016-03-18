@@ -14,7 +14,8 @@ knitr::opts_chunk$set(
   comment = "#>",
   fig.path = "figures/README-",
   cache = FALSE, 
-  messages = FALSE
+  message = FALSE,
+  warning = FALSE
 )
 library(smps)
 ```

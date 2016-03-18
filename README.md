@@ -39,10 +39,6 @@ Second, prepare the data for plotting using the `prepare_data` function. This co
 ``` r
 # prepare the data
 prepared_data <- prepare_data(my_data)
-#> Update: converting data from wide to long format...
-#> Update: wide to long format conversion complete.
-#> Update: interpolating the data to give a smooth contour...
-#> Update: interpolation complete.
 ```
 
 Third, plot the data, like so:
@@ -57,7 +53,6 @@ We can plot a data from a single day:
 
 ``` r
 smps_plot(prepared_data, day = "2013-01-26")
-#> Warning: Removed 743906 rows containing missing values (geom_raster).
 ```
 
 ![](figures/README-unnamed-chunk-6-1.png)<!-- -->
@@ -66,7 +61,6 @@ We can also have a log scale on the y-axis:
 
 ``` r
 smps_plot(prepared_data, y_axis = "log")
-#> Warning: Removed 8630 rows containing missing values (geom_rect).
 ```
 
 ![](figures/README-unnamed-chunk-7-1.png)<!-- -->
@@ -111,12 +105,8 @@ the_plots <- lapply(the_days, function(i) smps_plot(prepared_data,
 # we extract the legend of the a plot to use separately
 the_legend <- get_legend(smps_plot(prepared_data, day = "2013-01-26", 
                                                     font_size = 10))
-#> Warning: Removed 743906 rows containing missing values (geom_raster).
 # arrange the plots and scale
 grid.arrange(the_plots[[1]], the_plots[[2]], the_plots[[3]], the_legend, layout_matrix = rbind(c(1,1,4),c(2,2,4),c(3,3,4)))
-#> Warning: Removed 752536 rows containing missing values (geom_rect).
-#> Warning: Removed 752536 rows containing missing values (geom_rect).
-#> Warning: Removed 754262 rows containing missing values (geom_rect).
 ```
 
 ![](figures/README-unnamed-chunk-10-1.png)<!-- -->
