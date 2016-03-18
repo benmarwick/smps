@@ -80,10 +80,10 @@ smps_plot(prepared_data,
 Because the output is a ggplot object, we can add elements to it like a regular `ggplot()` call:
 
 ``` r
-smps_plot(prepared_data) + 
-  theme(legend.key.size = unit(0.2, "in") )
+smps_plot(prepared_data, font_size = 8) + 
+  theme(legend.key.size = unit(0.1, "in") )
 ```
 
 ![](README-unnamed-chunk-8-1.png)<!-- -->
 
-Please note that this project is released with a [Contributor Code of Conduct](CONDUCT.md). By participating in this project you agree to abide by its terms.
+Please note that this project is released with a [Guide to Contributing](CONTRIBUTING.md) and a [Contributor Code of Conduct](CONDUCT.md). By participating in this project you agree to abide by its terms.

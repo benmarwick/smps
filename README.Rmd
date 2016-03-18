@@ -38,7 +38,7 @@ library(smps)
 
 First, read your data into R and check that it is in a format that works with this package. You can inspect it to the example dataset that comes with the package like this
 
-```{r eval=FALSE}
+```{r eval=FALSE, messages=FALSE}
 data("my_data")
 str(my_data)
 head(my_data)
@@ -79,9 +79,9 @@ smps_plot(prepared_data,
 Because the output is a ggplot object, we can add elements to it like a regular `ggplot()` call:
 
 ```{r}
-smps_plot(prepared_data) + 
-  theme(legend.key.size = unit(0.2, "in") )
+smps_plot(prepared_data, font_size = 8) + 
+  theme(legend.key.size = unit(0.1, "in") )
 ```
 
-Please note that this project is released with a [Contributor Code of Conduct](CONDUCT.md). By participating in this project you agree to abide by its terms.
+Please note that this project is released with a [Guide to Contributing](CONTRIBUTING.md) and a [Contributor Code of Conduct](CONDUCT.md). By participating in this project you agree to abide by its terms.
 
