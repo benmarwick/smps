@@ -93,6 +93,7 @@ prepare_data <- function(the_data,
 #' @param h how many hours apart the x-axis ticks should be
 #' @param y_breaks location of major ticks on the y axis
 #' @param seconds_offset offset in seconds for adjusting the log y-axis
+#' @param colour_ramp colour scale to use for the contour
 #' @param y_axis 'linear' or 'log' (base 10) y-axis
 #' @param days the date of a single day, to limit the plot to one day or more days. Use the form "2013-01-26" with quotation marks, or make a vector with `c("2013-01-26", "2013-01-27")`
 #' @param ... so you can send other things to modify the theme and scales

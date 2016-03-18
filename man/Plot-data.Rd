@@ -20,6 +20,8 @@ smps_plot(the_prepared_data, aspect_ratio = 1.1/5, font_size = 12,
 
 \item{y_breaks}{location of major ticks on the y axis}
 
+\item{colour_ramp}{colour scale to use for the contour}
+
 \item{y_axis}{'linear' or 'log' (base 10) y-axis}
 
 \item{seconds_offset}{offset in seconds for adjusting the log y-axis}
