@@ -3,3 +3,8 @@
 export(get_legend)
 export(prepare_data)
 export(smps_plot)
+import(ggplot2)
+import(gridExtra)
+importFrom(akima,interp)
+importFrom(scales,log_trans)
+importFrom(tidyr,gather)

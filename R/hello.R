@@ -21,6 +21,8 @@
 #' @param interval_diameter interval to use when interpolating. Default is 0.75, higher is faster, but lower resolution on the plot
 #'
 #' @export
+#' @importFrom  akima interp
+#' @importFrom tidyr gather
 
 
 prepare_data <- function(the_data,
@@ -98,6 +100,8 @@ prepare_data <- function(the_data,
 #' @param days the date of a single day, to limit the plot to one day or more days. Use the form "2013-01-26" with quotation marks, or make a vector with `c("2013-01-26", "2013-01-27")`
 #' @param ... so you can send other things to modify the theme and scales
 #' @export
+#' @import ggplot2
+#' @importFrom scales log_trans
 #
 
 
@@ -310,6 +314,7 @@ fill_scale_labels <- function(x) {
 #' from http://stackoverflow.com/a/17470321/1036500
 #'
 #' @export
+#' @import gridExtra
 #'
 get_legend <- function(the_ggplot){
   requireNamespace(gridExtra)

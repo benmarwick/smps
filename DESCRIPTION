@@ -4,7 +4,7 @@ Title: Plots Scanning Mobility Particle Sizer Spectrometer (SMPS) data
 Version: 0.1.0
 Author: Ben Marwick and Doreena Doreena Dominick
 Maintainer: Ben Marwick <benmarwick@gmail.com>
-Description: Plots Scanning Mobility Particle Sizer Spectrometer (SMPS) data
+Description: Plots Scanning Mobility Particle Sizer Spectrometer (SMPS) data.
 License: MIT + file LICENSE
 LazyData: TRUE
 URL: https://github.com/benmarwick/smps
