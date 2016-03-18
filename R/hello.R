@@ -179,7 +179,6 @@ smps_plot <- function(the_prepared_data,
     # draw the plot with linear y-axis
 
 
-    requireNamespace(ggplot2)
     the_plot <- ggplot(data_to_plot, aes(y = Diameter,
                                               x = Time,
                                               fill = dN_dlogDp_log)) +
@@ -219,7 +218,7 @@ smps_plot <- function(the_prepared_data,
       data_to_plot$ymax <- unlist(lapply(upper, function(i) rep(i, idx)))
 
       # draw the plot
-      requireNamespace(scales)
+
       the_plot <- ggplot(data_to_plot, aes(y = Diameter, x = Time,
                                                 xmin=xmin, xmax=xmax,
                                                 ymin=ymin, ymax=ymax,
@@ -317,7 +316,7 @@ fill_scale_labels <- function(x) {
 #' @import gridExtra
 #'
 get_legend <- function(the_ggplot){
-  requireNamespace(gridExtra)
+
     tmp <- ggplot_gtable(ggplot_build(the_ggplot))
     leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
     legend <- tmp$grobs[[leg]]

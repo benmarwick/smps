@@ -89,6 +89,7 @@ smps_plot(prepared_data,
 Because the output is a ggplot object, we can add typical ggplot elements to it like a regular `ggplot()` call:
 
 ```{r}
+require(ggplot2)
 smps_plot(prepared_data, font_size = 8) + 
   theme(legend.key.size = unit(0.1, "in") )
 ```
@@ -108,10 +109,15 @@ the_plots <- lapply(the_days, function(i) smps_plot(prepared_data,
                                                     guides(fill = FALSE))
   
 # we extract the legend of the a plot to use separately
-the_legend <- get_legend(smps_plot(prepared_data, day = "2013-01-26", 
-                                                    font_size = 10))
+the_legend <- get_legend(smps_plot(prepared_data, 
+                                   day = "2013-01-26", 
+                                   font_size = 10))
 # arrange the plots and scale
-grid.arrange(the_plots[[1]], the_plots[[2]], the_plots[[3]], the_legend, layout_matrix = rbind(c(1,1,4),c(2,2,4),c(3,3,4)))
+grid.arrange(the_plots[[1]], 
+             the_plots[[2]], 
+             the_plots[[3]], 
+             the_legend, 
+             layout_matrix = rbind(c(1,1,4),c(2,2,4),c(3,3,4)))
 ```
 
 
