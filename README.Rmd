@@ -13,7 +13,8 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.path = "README-",
-  cache = TRUE
+  cache = FALSE, 
+  messages = FALSE
 )
 library(smps)
 ```
@@ -36,18 +37,20 @@ library(smps)
 
 ## How to use the package
 
-First, read your data into R and check that it is in a format that works with this package. You can inspect it to the example dataset that comes with the package like this
+First, read your data into R using `read.csv` or similar, and check that it is in a format that works with this package. 
 
-```{r eval=FALSE, messages=FALSE}
+You can inspect the example dataset that comes with the package like this:
+
+```{r eval=FALSE}
 data("my_data")
 str(my_data)
 head(my_data)
 View(my_data)
 ```
 
-Second, prepare the data using the `prepare_data` function. This converts the variable types and data format into forms suitable for plotting. It also does interpolation of the measured values to give a smooth contour plot. The interpolation can take a minute or two. You can experiment with the interpolation parameters to speed up the operation.
+Second, prepare the data for plotting using the `prepare_data` function. This converts the variable types and data format into forms suitable for plotting. It also does interpolation of the measured values to give a smooth contour plot. The interpolation can take a minute or two. You can experiment with the interpolation parameters to speed up the operation.
 
-```{r}
+```{r, cache = TRUE}
 # prepare the data
 prepared_data <- prepare_data(my_data)
 ```
@@ -76,12 +79,13 @@ smps_plot(prepared_data,
           colour_ramp = viridis) 
 ```
 
-Because the output is a ggplot object, we can add elements to it like a regular `ggplot()` call:
+Because the output is a ggplot object, we can add typical ggplot elements to it like a regular `ggplot()` call:
 
 ```{r}
 smps_plot(prepared_data, font_size = 8) + 
   theme(legend.key.size = unit(0.1, "in") )
 ```
+
 
 Please note that this project is released with a [Guide to Contributing](CONTRIBUTING.md) and a [Contributor Code of Conduct](CONDUCT.md). By participating in this project you agree to abide by its terms.
 

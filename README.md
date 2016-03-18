@@ -23,7 +23,9 @@ library(smps)
 How to use the package
 ----------------------
 
-First, read your data into R and check that it is in a format that works with this package. You can inspect it to the example dataset that comes with the package like this
+First, read your data into R using `read.csv` or similar, and check that it is in a format that works with this package.
+
+You can inspect the example dataset that comes with the package like this:
 
 ``` r
 data("my_data")
@@ -32,7 +34,7 @@ head(my_data)
 View(my_data)
 ```
 
-Second, prepare the data using the `prepare_data` function. This converts the variable types and data format into forms suitable for plotting. It also does interpolation of the measured values to give a smooth contour plot. The interpolation can take a minute or two. You can experiment with the interpolation parameters to speed up the operation.
+Second, prepare the data for plotting using the `prepare_data` function. This converts the variable types and data format into forms suitable for plotting. It also does interpolation of the measured values to give a smooth contour plot. The interpolation can take a minute or two. You can experiment with the interpolation parameters to speed up the operation.
 
 ``` r
 # prepare the data
@@ -77,7 +79,7 @@ smps_plot(prepared_data,
 
 ![](README-unnamed-chunk-7-1.png)<!-- -->
 
-Because the output is a ggplot object, we can add elements to it like a regular `ggplot()` call:
+Because the output is a ggplot object, we can add typical ggplot elements to it like a regular `ggplot()` call:
 
 ``` r
 smps_plot(prepared_data, font_size = 8) + 
