@@ -7,7 +7,7 @@
 \usage{
 smps_plot(the_prepared_data, aspect_ratio = 1.1/5, font_size = 12,
   h = "2 hours", y_breaks = 100, colour_ramp = colour_ramp_igor,
-  y_axis = "linear", seconds_offset = 1000, ...)
+  y_axis = "linear", seconds_offset = 1000, days = NULL, ...)
 }
 \arguments{
 \item{the_prepared_data}{the output from the prepare_data function}
@@ -25,5 +25,7 @@ smps_plot(the_prepared_data, aspect_ratio = 1.1/5, font_size = 12,
 \item{seconds_offset}{offset in seconds for adjusting the log y-axis}
 
 \item{...}{so you can send other things to modify the theme and scales}
+
+\item{one_day}{the date of a single day, to limit the plot to one day or more days. Use the form "2013-01-26" with quotation marks, or make a vector with `c("2013-01-26", "2013-01-27")`}
 }
 

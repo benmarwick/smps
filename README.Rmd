@@ -61,6 +61,12 @@ Third, plot the data, like so:
 smps_plot(prepared_data)
 ```
 
+We can plot a data from a single day:
+
+```{r}
+smps_plot(prepared_data, day = "2013-01-26")
+```
+
 We can also have a log scale on the y-axis:
 
 ```{r}
@@ -84,6 +90,27 @@ Because the output is a ggplot object, we can add typical ggplot elements to it 
 ```{r}
 smps_plot(prepared_data, font_size = 8) + 
   theme(legend.key.size = unit(0.1, "in") )
+```
+
+With `gridExtra` we can stack a few plots together, and arrange a common legend to the side:
+
+```{r, cache = TRUE}
+library(gridExtra)
+# select the days to plot
+the_days <- c("2013-01-26", "2013-01-27", "2013-01-28")
+# draw three plots, one day each, collect them in a list
+the_plots <- lapply(the_days, function(i) smps_plot(prepared_data, 
+                                                    day = i, 
+                                                    y_axis = "log",  
+                                                    h = '3 hours', 
+                                                    font_size = 8) +   
+                                                    guides(fill = FALSE))
+  
+# we extract the legend of the a plot to use separately
+the_legend <- get_legend(smps_plot(prepared_data, day = "2013-01-26", 
+                                                    font_size = 10))
+# arrange the plots and scale
+grid.arrange(the_plots[[1]], the_plots[[2]], the_plots[[3]], the_legend, layout_matrix = rbind(c(1,1,4),c(2,2,4),c(3,3,4)))
 ```
 
 

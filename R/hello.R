@@ -1,8 +1,4 @@
-# Hello, world!
-#
-# This is an example function named 'hello'
-# which prints 'Hello, world!'.
-#
+
 # You can learn more about package authoring with RStudio at:
 #
 #   http://r-pkgs.had.co.nz/
@@ -13,9 +9,6 @@
 #   Check Package:             'Ctrl + Shift + E'
 #   Test Package:              'Ctrl + Shift + T'
 
-hello <- function() {
-  print("Hello, world!")
-}
 
 #' @title Prepare the data
 #' @name Prepare data
@@ -101,6 +94,7 @@ prepare_data <- function(the_data,
 #' @param y_breaks location of major ticks on the y axis
 #' @param seconds_offset offset in seconds for adjusting the log y-axis
 #' @param y_axis 'linear' or 'log' (base 10) y-axis
+#' @param one_day the date of a single day, to limit the plot to one day or more days. Use the form "2013-01-26" with quotation marks, or make a vector with `c("2013-01-26", "2013-01-27")`
 #' @param ... so you can send other things to modify the theme and scales
 #' @export
 #
@@ -114,29 +108,74 @@ smps_plot <- function(the_prepared_data,
                       colour_ramp = colour_ramp_igor,
                       y_axis = 'linear',
                       seconds_offset = 1000,
+                      days = NULL,
                       ...) {
 
 
   y_labels_breaks <-  seq(0, max(the_prepared_data$Diameter), y_breaks)
 
   # add tick marks every h hours
-  start_date        <- min(the_prepared_data$Time)
-  end_date          <-  max(the_prepared_data$Time)
-  date_breaks_h     <-  seq(from = start_date, to = end_date, by = h)
-  date_breaks_1_day <- seq(from = start_date, to = end_date, by = "1 day")
-  multiple          <- length(date_breaks_h) / length(date_breaks_1_day)
+
 
 
   # set a few details for a custom theme
   mytheme <- ggplot2::theme_bw(base_size = font_size, ...) +
     ggplot2::theme(aspect.ratio = aspect_ratio, ...)
 
-  if (y_axis == "linear"){
+  if (!is.null(days)) {
+    # subset the days
+    data_to_plot <- the_prepared_data
+    # subset days for x lim and x-axis scaling
+    subset_days <- the_prepared_data[grepl(days, the_prepared_data$Time), ]
+
+    # for custom time breaks for one or a few days
+    start_date <- min(subset_days$Time)
+    end_date <-  max(subset_days$Time)
+    date_breaks_h     <-  seq(from = start_date, to = end_date, by = h)
+    date_breaks_1_day <- seq(from = start_date, to = end_date, by = "1 day")
+    multiple          <- length(date_breaks_h) / length(date_breaks_1_day)
+    time_labels_breaks <- seq(start_date, end_date, h)
+
+    # show hours on the x-axis
+    date_labels <- strftime(time_labels_breaks, "%H:%S")
+
+    if (length(days) == 1) {
+      the_xlab <- format(start_date, "%d-%b")
+    } else {
+      the_xlab <- paste0(format(start_date, "%d-%b"), " - ", format(end_date, "%d-%b"))
+    }
+
+  } else {
+    # all the days
+    data_to_plot <- the_prepared_data
+
+    # for custom time breaks for all the days
+    start_date <- min(data_to_plot$Time)
+    end_date <-  max(data_to_plot$Time)
+    date_breaks_h     <-  seq(from = start_date, to = end_date, by = h)
+    date_breaks_1_day <- seq(from = start_date, to = end_date, by = "1 day")
+    multiple          <- length(date_breaks_h) / length(date_breaks_1_day)
+    time_labels_breaks <- seq(start_date, end_date, h)
+
+    # show days on the x-axis
+    date_labels <- insert_minor(multiple = multiple,
+                                format(date_breaks_1_day, "%d %b"),
+                                length(date_breaks_1_day))
+    the_xlab <- "Day and time"
+
+  }
+
+
+
+   # plot all the data
+
+
+  if (y_axis == "linear") {
     # draw the plot with linear y-axis
 
 
     require(ggplot2)
-    the_plot <- ggplot(the_prepared_data, aes(y = Diameter,
+    the_plot <- ggplot(data_to_plot, aes(y = Diameter,
                                               x = Time,
                                               fill = dN_dlogDp_log)) +
       geom_raster(interpolate = TRUE)  +
@@ -148,12 +187,11 @@ smps_plot <- function(the_prepared_data,
                          breaks = y_labels_breaks,
                          ...) +
       scale_x_datetime(expand = c(0,0),
+                       limits = c(as.POSIXct(start_date), as.POSIXct(end_date)),
                        breaks = date_breaks_h,
-                       labels = insert_minor(multiple = multiple,
-                                             format(date_breaks_1_day, "%d %b"),
-                                             length(date_breaks_1_day)),
+                       labels = date_labels,
                        ...) +
-      xlab("Day and time") +
+      xlab(the_xlab) +
       ylab("Diameter (nm)") +
       mytheme
 
@@ -164,20 +202,20 @@ smps_plot <- function(the_prepared_data,
       # plot with log y-axis
 
       # Now with log axis, we need to replace the ymin and ymax
-      distance <- diff((unique(the_prepared_data$Diameter)))/2
-      upper <- (unique(the_prepared_data$Diameter)) + c(distance, distance[length(distance)])
-      lower <- (unique(the_prepared_data$Diameter)) - c(distance[1], distance)
+      distance <- diff((unique(data_to_plot$Diameter)))/2
+      upper <- (unique(data_to_plot$Diameter)) + c(distance, distance[length(distance)])
+      lower <- (unique(data_to_plot$Diameter)) - c(distance[1], distance)
 
       # Create xmin, xmax, ymin, ymax
-      the_prepared_data$xmin <- the_prepared_data$Time - seconds_offset # default of geom_raster is 0.5
-      the_prepared_data$xmax <- the_prepared_data$Time + seconds_offset
-      idx <- rle(the_prepared_data$Diameter)$lengths[1]
-      the_prepared_data$ymin <- unlist(lapply(lower, function(i) rep(i, idx)))
-      the_prepared_data$ymax <- unlist(lapply(upper, function(i) rep(i, idx)))
+      data_to_plot$xmin <- data_to_plot$Time - seconds_offset # default of geom_raster is 0.5
+      data_to_plot$xmax <- data_to_plot$Time + seconds_offset
+      idx <- rle(data_to_plot$Diameter)$lengths[1]
+      data_to_plot$ymin <- unlist(lapply(lower, function(i) rep(i, idx)))
+      data_to_plot$ymax <- unlist(lapply(upper, function(i) rep(i, idx)))
 
       # draw the plot
       require(scales)
-      the_plot <- ggplot(the_prepared_data, aes(y = Diameter, x = Time,
+      the_plot <- ggplot(data_to_plot, aes(y = Diameter, x = Time,
                                                 xmin=xmin, xmax=xmax,
                                                 ymin=ymin, ymax=ymax,
                                                 fill = dN_dlogDp_log)) +
@@ -189,12 +227,11 @@ smps_plot <- function(the_prepared_data,
         scale_y_continuous(expand = c(0,0),
                            trans = log_trans(), breaks = base_breaks()) +
         scale_x_datetime(expand = c(0,0),
+                         limits = c(as.POSIXct(start_date), as.POSIXct(end_date)),
                          breaks = date_breaks_h,
-                         labels = insert_minor(multiple = multiple,
-                                               format(date_breaks_1_day, "%d %b"),
-                                               length(date_breaks_1_day)),
+                         labels = date_labels,
                          ...) +
-        xlab("Day and time") +
+        xlab(the_xlab) +
         ylab("Diameter (nm)") +
         mytheme
 
@@ -261,6 +298,24 @@ colour_ramp_igor <- colorRampPalette(rev(c( rep("red", 3),
 # function to set the legend labels
 fill_scale_labels <- function(x) {
   parse(text = paste0("10^",x))
+}
+
+
+
+#' Get the legend
+#'
+#' @param the_ggplot
+#'
+#' from http://stackoverflow.com/a/17470321/1036500
+#'
+#' @export
+#'
+get_legend <- function(the_ggplot){
+  require(gridExtra)
+    tmp <- ggplot_gtable(ggplot_build(the_ggplot))
+    leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+    legend <- tmp$grobs[[leg]]
+    return(legend)
 }
 
 
