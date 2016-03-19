@@ -24,7 +24,7 @@ library(smps)
 
 ## Introduction
 
-This package produces time series colour contour plots of data from Scanning Mobility Particle Sizer Spectrometer (SMPS) data. The SMPS is the standard method to measure airborne particle size distributions. The plots that this package produces are widely used for visualising SMPS data in atmospheric science research. 
+This package produces time series colour contour plots of data from Scanning Mobility Particle Sizer Spectrometer (SMPS) data. The SMPS is the standard method to measure airborne particle size distributions. The plots that this package produces are widely used for visualising SMPS data in atmospheric science. 
 
 ## How to install the package
 
