@@ -125,7 +125,8 @@ smps_plot <- function(the_prepared_data,
 
   # set a few details for a custom theme
   mytheme <- ggplot2::theme_bw(base_size = font_size, ...) +
-    ggplot2::theme(aspect.ratio = aspect_ratio, ...)
+    ggplot2::theme(aspect.ratio = aspect_ratio, ...) +
+    ggplot2::theme(plot.margin = unit(c(0, 0, 0, 0), "null"))
 
   if (!is.null(days)) {
     # subset the days
