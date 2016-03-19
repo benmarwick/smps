@@ -7,7 +7,7 @@ SMPS
 Introduction
 ------------
 
-This package produces time series colour contour plots of data from Scanning Mobility Particle Sizer Spectrometer (SMPS) data. The SMPS is the standard method to measure airborne particle size distributions. The plots that this package produces are widely used for visualising SMPS data in atmospheric science.
+This package produces time series colour contour plots of data from [Scanning Mobility Particle Sizer (SMPS)](https://en.wikipedia.org/wiki/Scanning_mobility_particle_sizer) data. The SMPS is the standard method to measure airborne particle size distributions. The kind of plots that this package produces are widely used for visualising SMPS data in atmospheric science.
 
 How to install the package
 --------------------------
@@ -34,7 +34,7 @@ head(my_data)
 View(my_data)
 ```
 
-Second, prepare the data for plotting using the `prepare_data` function. This converts the variable types and data format into forms suitable for plotting. It also does interpolation of the measured values to give a smooth contour plot. The interpolation can take a minute or two. You can experiment with the interpolation parameters to speed up the operation.
+Second, prepare your data for plotting using the `prepare_data` function. This converts the variable types and data format into forms suitable for plotting. It also does interpolation of the measured values to give a smooth contour plot. The interpolation can take a minute or two. You can experiment with the interpolation parameters to speed up the operation.
 
 ``` r
 # prepare the data
@@ -49,18 +49,21 @@ smps_plot(prepared_data)
 
 ![](figures/README-unnamed-chunk-5-1.png)<!-- -->
 
-We can plot a data from a single day:
-
-``` r
-smps_plot(prepared_data, day = "2013-01-26")
-```
-
-![](figures/README-unnamed-chunk-6-1.png)<!-- -->
-
 We can also have a log scale on the y-axis:
 
 ``` r
 smps_plot(prepared_data, y_axis = "log")
+```
+
+![](figures/README-unnamed-chunk-6-1.png)<!-- -->
+
+We can plot a data from a single day:
+
+``` r
+smps_plot(prepared_data, 
+          day = "2013-01-26", 
+          aspect_ratio = 1/2, 
+          h = '3 hours')
 ```
 
 ![](figures/README-unnamed-chunk-7-1.png)<!-- -->
@@ -107,6 +110,7 @@ the_plots <- lapply(the_days, function(i) smps_plot(prepared_data,
 the_legend <- get_legend(smps_plot(prepared_data, 
                                    day = "2013-01-26", 
                                    font_size = 10))
+
 # arrange the plots and scale
 grid.arrange(the_plots[[1]], 
              the_plots[[2]], 
