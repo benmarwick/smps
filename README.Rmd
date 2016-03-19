@@ -58,19 +58,19 @@ prepared_data <- prepare_data(my_data)
 
 Third, plot the data, like so:
 
-```{r}
+```{r prep}
 smps_plot(prepared_data)
 ```
 
 We can also have a log scale on the y-axis:
 
-```{r}
+```{r log}
 smps_plot(prepared_data, y_axis = "log")
 ```
 
 We can plot a data from a single day:
 
-```{r}
+```{r oneday}
 smps_plot(prepared_data, 
           day = "2013-01-26", 
           aspect_ratio = 1/2, 
@@ -79,7 +79,7 @@ smps_plot(prepared_data,
 
 We can customise a variety of options, including the colour ramp:
 
-```{r}
+```{r options}
 require(viridis)
 smps_plot(prepared_data, 
           font_size = 9, 
@@ -91,7 +91,7 @@ smps_plot(prepared_data,
 
 Because the output is a ggplot object, we can add typical ggplot elements to it like a regular `ggplot()` call:
 
-```{r}
+```{r ggpl}
 require(ggplot2)
 smps_plot(prepared_data, font_size = 8) + 
   theme(legend.key.size = unit(0.1, "in") )
@@ -99,7 +99,7 @@ smps_plot(prepared_data, font_size = 8) +
 
 With `gridExtra` we can stack a few plots together, and arrange a common legend to the side:
 
-```{r, cache = TRUE}
+```{r, combine, cache = TRUE}
 library(gridExtra)
 # select the days to plot
 the_days <- c("2013-01-26", "2013-01-27", "2013-01-28")
