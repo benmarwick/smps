@@ -87,7 +87,8 @@ Because the output is a ggplot object, we can add typical ggplot elements to it 
 ``` r
 require(ggplot2)
 smps_plot(prepared_data, font_size = 8) + 
-  theme(legend.key.size = unit(0.1, "in") )
+  xlab("Three days of interesting data") +
+  theme(legend.key.size = unit(0.1, "in"))
 ```
 
 ![](figures/README-ggpl-1.png)<!-- -->
