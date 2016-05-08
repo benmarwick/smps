@@ -11,7 +11,7 @@
 
 
 #' @title Prepare the data
-#' @name Prepare data
+#' @name prepare_data
 #
 # This reads in the data and ensures the diameter values are numeric and the time values are dates. We assume the input data has the first row as date-time values, and the column headings for the rest of the data are the particle diameter values.
 
@@ -85,7 +85,7 @@ prepare_data <- function(the_data,
 
 
 #' @title Plot the data
-#' @name Plot data
+#' @name smps_plot
 #
 # This draws a plot of the data
 
@@ -181,9 +181,9 @@ smps_plot <- function(the_prepared_data,
 
 
     the_plot <- ggplot(data_to_plot, aes(y = Diameter,
-                                              x = Time,
-                                              fill = dN_dlogDp_log)) +
-      geom_raster(interpolate = TRUE)  +
+                                              x = Time)) +
+      geom_raster(interpolate = TRUE,
+                  aes(fill = dN_dlogDp_log))  +
       scale_fill_gradientn(name = expression(dN/dlogD[p]~cm^-3),
                            colours = colour_ramp(100),
                            labels = fill_scale_labels) +
@@ -255,8 +255,17 @@ smps_plot <- function(the_prepared_data,
 
 ##### plotting helper functions #####
 
-# function for minor tick marks
-
+#' @title Function for minor tick marks
+#' @name every_nth
+#'
+#' @param x .
+#' @param nth .
+#' @param empty .
+#' @param inverse .
+#'
+#' @return .
+#' @export
+#'
 every_nth <- function(x, nth, empty = TRUE, inverse = FALSE)
 {
   if (!inverse) {
@@ -276,15 +285,33 @@ every_nth <- function(x, nth, empty = TRUE, inverse = FALSE)
   }
 }
 
-# get visually diminishing axis ticks
 
+
+#' @title Get visually diminishing axis ticks
+#' @name base_breaks
+#'
+#' @param n .
+#'
+#' @return .
+#' @export
+#'
 base_breaks <- function(n = 10){
   function(x) {
     axisTicks(log10(range(x, na.rm = TRUE)), log = TRUE, n = n)
   }
 }
 
-# insert minor tick marks
+#' @title Insert minor tick marks
+#' @name insert_minor
+#'
+#'
+#' @param major_labs .
+#' @param n_minor .
+#' @param multiple .
+#'
+#' @return .
+#' @export
+#'
 insert_minor <- function(major_labs, n_minor, multiple) {labs <-
   c( sapply( major_labs, function(x) c(x, rep("", multiple) ) ) )
 labs[1:(length(labs)-n_minor)]
@@ -300,16 +327,26 @@ colour_ramp_igor <- colorRampPalette(rev(c( rep("red", 3),
                                             rep("blue", 3),
                                             "purple")))
 
-# function to set the legend labels
+
+#' @title Function to set the legend labels
+#' @name fill_scale_labels
+#'
+#'
+#' @param x .
+#'
+#' @return .
+#' @export
+#'
 fill_scale_labels <- function(x) {
   parse(text = paste0("10^",x))
 }
 
 
 
-#' Get the legend
+#' @title Get the legend
+#' @name get_legend
 #'
-#' @param the_ggplot
+#' @param the_ggplot .
 #'
 #' from http://stackoverflow.com/a/17470321/1036500
 #'
@@ -323,6 +360,31 @@ get_legend <- function(the_ggplot){
     legend <- tmp$grobs[[leg]]
     return(legend)
 }
+
+
+#' @title Convert Excel format dates to POSIX Date-time values
+#' @name reformat_date
+#'
+#' In Excel if we have a date like this: 16/1/2013 23:58 it's not very
+#' useful in R. This function rearranges the Excel date string into
+#' a POSIX date-time string such as:  "2013-01-16 23:58:00 ICT". This is
+#' useful if you want to add other layers to the main plot and you
+#' need to convert the Excel date format into the POSIX format that
+#' we're using for the main plot.
+#'
+#' @param the_dates .
+#'
+#' @return .
+#' @export
+#'
+reformat_date <- function(the_excel_dates){
+  x <-  as.character(the_excel_dates)
+  date_ <- as.Date(x, format = "%d/%m/%Y")
+  time_ <- gsub(" ", "", substr(x, nchar(x) - 4, nchar(x)))
+  the_dates_converted <- as.POSIXct(paste0(date_, " ", time_))
+  return(the_dates_converted)
+}
+
 
 
 #' SMPS dataset

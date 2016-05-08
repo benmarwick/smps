@@ -7,9 +7,8 @@
 get_legend(the_ggplot)
 }
 \arguments{
-\item{the_ggplot}{from http://stackoverflow.com/a/17470321/1036500}
-}
-\description{
-Get the legend
+\item{the_ggplot}{.
+
+from http://stackoverflow.com/a/17470321/1036500}
 }
 
