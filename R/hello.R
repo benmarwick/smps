@@ -1,15 +1,3 @@
-
-# You can learn more about package authoring with RStudio at:
-#
-#   http://r-pkgs.had.co.nz/
-#
-# Some useful keyboard shortcuts for package authoring:
-#
-#   Build and Reload Package:  'Ctrl + Shift + B'
-#   Check Package:             'Ctrl + Shift + E'
-#   Test Package:              'Ctrl + Shift + T'
-
-
 #' @title Prepare the data
 #' @name prepare_data
 #
@@ -395,3 +383,4 @@ reformat_date <- function(the_excel_dates){
 #' @format A data frame
 #'
 "my_data"
+
