@@ -181,7 +181,7 @@ smps_plot <- function(the_prepared_data,
 
 
     the_plot <- ggplot(data_to_plot, aes(y = Diameter,
-                                              x = Time)) +
+                                         x = Time)) +
       geom_raster(interpolate = TRUE,
                   aes(fill = dN_dlogDp_log))  +
       scale_fill_gradientn(name = expression(dN/dlogD[p]~cm^-3),
@@ -220,11 +220,12 @@ smps_plot <- function(the_prepared_data,
 
       # draw the plot
 
-      the_plot <- ggplot(data_to_plot, aes(y = Diameter, x = Time,
-                                                xmin=xmin, xmax=xmax,
-                                                ymin=ymin, ymax=ymax,
-                                                fill = dN_dlogDp_log)) +
-        geom_rect()  +
+      the_plot <- ggplot(data_to_plot, aes(y = Diameter,
+                                           x = Time
+                                                )) +
+        geom_rect(aes(xmin=xmin, xmax=xmax,
+                  ymin=ymin, ymax=ymax,
+                  fill = dN_dlogDp_log))  +
         scale_fill_gradientn(name = expression(dN/dlogD[p]~cm^-3),
                              colours = colour_ramp(100),
                              labels = fill_scale_labels,
