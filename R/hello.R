@@ -340,7 +340,7 @@ fill_scale_labels <- function(x) {
 #' from http://stackoverflow.com/a/17470321/1036500
 #'
 #' @export
-#' @import gridExtra
+#' @importFrom ggplot2 ggplot_gtable ggplot_build
 #'
 get_legend <- function(the_ggplot){
 
@@ -361,12 +361,13 @@ get_legend <- function(the_ggplot){
 #' need to convert the Excel date format into the POSIX format that
 #' we're using for the main plot.
 #'
-#' @param the_dates .
+#' @param the_excel_dates .
 #'
 #' @return .
 #' @export
 #'
 reformat_date <- function(the_excel_dates){
+
   x <-  as.character(the_excel_dates)
   date_ <- as.Date(x, format = "%d/%m/%Y")
   time_ <- gsub(" ", "", substr(x, nchar(x) - 4, nchar(x)))
