@@ -8,7 +8,7 @@ prepare_data(the_data, cols = 1:ncol(the_data), interval_in_seconds = 200,
   interval_diameter = 0.75)
 }
 \arguments{
-\item{the_data}{data frame with rows as day-time, columns as particle sizes}
+\item{the_data}{data frame with rows as date-time, columns as particle sizes. The first column (and only the first column) must contain date-time values.}
 
 \item{cols}{subset of columns to prepare, if the_data has other columns that should be ignored by this function. Default is all columns}
 

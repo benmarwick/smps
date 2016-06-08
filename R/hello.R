@@ -1,9 +1,9 @@
 #' @title Prepare the data
 #' @name prepare_data
 #
-# This reads in the data and ensures the diameter values are numeric and the time values are dates. We assume the input data has the first row as date-time values, and the column headings for the rest of the data are the particle diameter values.
+# This reads in the data and ensures the diameter values are numeric and the time values are dates. We assume the input data has the first column as date-time values, and the column headings for the rest of the data are the particle diameter values.
 
-#' @param the_data data frame with rows as day-time, columns as particle sizes
+#' @param the_data data frame with rows as date-time, columns as particle sizes. The first column (and only the first column) must contain date-time values.
 #' @param cols subset of columns to prepare, if the_data has other columns that should be ignored by this function. Default is all columns
 #' @param interval_in_seconds interval to use when interpolating. Default is 200, higher is faster, but lower resolution on the plot
 #' @param interval_diameter interval to use when interpolating. Default is 0.75, higher is faster, but lower resolution on the plot
@@ -20,6 +20,9 @@ prepare_data <- function(the_data,
 
   # focus on the untransformed values
   dat <- the_data[, cols]
+
+  # set name of the first col to "Time"
+  names(dat)[1] <-  "Time"
 
   # get Diameter value from col names
   Diameter <- as.numeric(gsub("X", "", names(dat)[-1]))
@@ -363,7 +366,6 @@ get_legend <- function(the_ggplot){
 #'
 #' @param the_excel_dates .
 #'
-#' @return .
 #' @export
 #'
 reformat_date <- function(the_excel_dates){
@@ -377,7 +379,9 @@ reformat_date <- function(the_excel_dates){
 
 
 
-#' SMPS dataset
+#' @title Example SMPS dataset to demonstrate the package
+#' @name Example SMPS dataset
+#'
 #'
 #' A dataset containing particle counts over three days.
 #'
