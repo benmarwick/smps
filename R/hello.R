@@ -11,6 +11,8 @@
 #' @export
 #' @importFrom  akima interp
 #' @importFrom tidyr gather
+#'
+
 
 
 prepare_data <- function(the_data,
@@ -52,17 +54,44 @@ prepare_data <- function(the_data,
 
   # interpolate the log values
   message("Update: interpolating the data to give a smooth contour...")
-  xo <- with(dat_long, seq(min(Time), max(Time), interval_in_seconds))
-  yo <- with(dat_long, seq(min(Diameter), max(Diameter), interval_diameter))
-  dat_interp_log <- with(dat_long, akima::interp(Time, Diameter, dN_dlogDp_log, xo = xo, yo = yo) )
-  message("Update: interpolation complete.")
+  # split into small pieces, interp, then recombine
 
-  # make log data into a data frame for ggplot
-  dat_interp_log_df <-  data.frame(matrix(data = dat_interp_log$z,
-                                          ncol = length(dat_interp_log$y),
-                                          nrow = length(dat_interp_log$x)))
-  names(dat_interp_log_df) <- dat_interp_log$y
-  dat_interp_log_df$Time <- as.POSIXct(dat_interp_log$x, origin = "1970-01-01")
+  # how many rows in each diameter class?
+  # We need at least two unique diameter values to interpolate
+  unique_diameter_values <- 5 # must be more than 2
+  n <-  as.data.frame(table(dat_long$Diameter))[1,2] * unique_diameter_values
+  chunks_of_n_rows <- split(dat_long, (seq(nrow(dat_long))-1) %/% n)
+  interp_output <- vector("list", length = length(chunks_of_n_rows))
+  # clear memory
+  invisible(gc())
+  # interpolate chunk by chunk
+  for(i in seq_len(length(chunks_of_n_rows))){
+    print(paste0("Interpolating chunk ",
+                 i,
+                 " of ",
+                 length(chunks_of_n_rows), " chunks..."))
+
+    x1 <- chunks_of_n_rows[[i]]
+    xo <- with(x1, seq(min(Time), max(Time), interval_in_seconds))
+    yo <- with(x1, seq(min(Diameter), max(Diameter), interval_diameter))
+    x2 <- with(x1, akima::interp(Time, Diameter, dN_dlogDp_log, xo = xo, yo = yo) )
+    x3 <-  data.frame(matrix(data = x2$z,
+                             ncol = length(x2$y),
+                             nrow = length(x2$x)))
+    names(x3) <- x2$y
+    x3$Time <- as.POSIXct(x2$x, origin = "1970-01-01")
+    interp_output[[i]] <- x3
+    invisible(gc())
+
+  }
+
+  # combine pieces into one big df, too many time columns!
+  .time <- interp_output[[1]]$Time
+  dat_interp_log_df <- do.call("cbind", interp_output)
+  dat_interp_log_df[, names(dat_interp_log_df) == "Time"] <- NULL
+  dat_interp_log_df$Time <- .time
+
+  message("Update: interpolation complete.")
 
   # wide to long
   dat_interp_log_df_long <- tidyr::gather(dat_interp_log_df, "Diameter", "dN_dlogDp_log", 1:(ncol(dat_interp_log_df)-1))
@@ -170,11 +199,28 @@ smps_plot <- function(the_prepared_data,
   if (y_axis == "linear") {
     # draw the plot with linear y-axis
 
+    # testing...
+    distance <- diff((unique(data_to_plot$Diameter)))/2
+    upper <- (unique(data_to_plot$Diameter)) + c(distance, distance[length(distance)])
+    lower <- (unique(data_to_plot$Diameter)) - c(distance[1], distance)
+
+    # Create xmin, xmax, ymin, ymax
+    data_to_plot$xmin <- data_to_plot$Time - seconds_offset # default of geom_raster is 0.5
+    data_to_plot$xmax <- data_to_plot$Time + seconds_offset
+    idx <- rle(data_to_plot$Diameter)$lengths[1]
+    data_to_plot$ymin <- unlist(lapply(lower, function(i) rep(i, idx)))
+    data_to_plot$ymax <- unlist(lapply(upper, function(i) rep(i, idx)))
+
+
 
     the_plot <- ggplot(data_to_plot, aes(y = Diameter,
                                          x = Time)) +
-      geom_raster(interpolate = TRUE,
-                  aes(fill = dN_dlogDp_log))  +
+      #testing
+      geom_rect(aes(xmin=xmin, xmax=xmax,
+                    ymin=ymin, ymax=ymax,
+                    fill = dN_dlogDp_log))  +
+      # geom_raster(interpolate = TRUE,
+      #             aes(fill = dN_dlogDp_log))  +
       scale_fill_gradientn(name = expression(dN/dlogD[p]~cm^-3),
                            colours = colour_ramp(100),
                            labels = fill_scale_labels) +
