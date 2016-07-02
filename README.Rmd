@@ -59,7 +59,7 @@ prepared_data <- prepare_data(my_data)
 Third, plot the data, like so:
 
 ```{r prep}
-smps_plot(prepared_data)
+smps_plot(prepared_data) 
 ```
 
 We can also have a log scale on the y-axis:

@@ -352,8 +352,8 @@ smps_plot <- function(the_prepared_data,
                            trans = log_trans(), breaks = base_breaks()) +
         scale_x_datetime(expand = c(0,0),
                          limits = c(as.POSIXct(start_date), as.POSIXct(end_date)),
-                         breaks = date_breaks_h,
-                         labels = date_labels,
+                         # breaks = date_breaks_h,
+                         # labels = date_labels,
                          ...) +
         xlab(the_xlab) +
         ylab("Diameter (nm)") +
