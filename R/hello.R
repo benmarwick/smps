@@ -110,7 +110,7 @@ prepare_data <- function(the_data,
   message("Update: wide to long format conversion complete...")
 
   message(paste0("Update: the data has ", nrow(can_take_these_rows),
-                 " runs of consequtive measurements. I will interpolate each run separately..."))
+                 " runs of consecutive measurements. I will interpolate each run separately..."))
   # loop to interpolate each good section of data
   invisible(gc())
   list_of_sections_long_interp <- vector("list", length(list_of_sections_long))
