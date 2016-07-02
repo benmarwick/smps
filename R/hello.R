@@ -7,6 +7,7 @@
 #' @param cols subset of columns to prepare, if the_data has other columns that should be ignored by this function. Default is all columns
 #' @param interval_in_seconds interval to use when interpolating. Default is 200, higher is faster, but lower resolution on the plot
 #' @param interval_diameter interval to use when interpolating. Default is 0.75, higher is faster, but lower resolution on the plot
+#' @param unique_diameter_values how many unique diamater values to include in each interpolation chunk. Default is 5.
 #'
 #' @export
 #' @importFrom  akima interp
@@ -16,92 +17,173 @@
 
 
 prepare_data <- function(the_data,
-                         cols = 1:ncol(the_data),
-                         interval_in_seconds = 200,
-                         interval_diameter = 0.75) {
+                            cols = 1:ncol(the_data),
+                            interval_in_seconds = 200,
+                            interval_diameter = 0.75,
+                            unique_diameter_values = 5) {
 
   # focus on the untransformed values
   dat <- the_data[, cols]
 
-  # set name of the first col to "Time"
-  names(dat)[1] <-  "Time"
-
   # get Diameter value from col names
   Diameter <- as.numeric(gsub("X", "", names(dat)[-1]))
-
-  # melt the wide data into long format
-  # see http://www.cookbook-r.com/Manipulating_data/Converting_data_between_wide_and_long_format/
-  message("Update: converting data from wide to long format...")
-  dat_long <- tidyr::gather(dat, "Diameter", "dN_dlogDp", 2:max(cols))
-  message("Update: wide to long format conversion complete.")
-
-  # we want diameter as a numeric
-  dat_long$Diameter <- as.numeric(gsub("X", "", dat_long$Diameter ))
-  # we want time as a date-formatted variable
-  x <-  as.character(dat_long$Time)
-  date_ <- as.Date(x, format = "%d/%m/%Y")
-  time_ <- gsub(" ", "", substr(x, nchar(x) - 4, nchar(x)))
-  dat_long$Time <- as.POSIXct(paste0(date_, " ", time_))
-
-  # The Igor plot seems to use log dN_dlogDp values, so let's get those
-  dat_long$dN_dlogDp_log <- log10(dat_long$dN_dlogDp)
-  dat_long$dN_dlogDp_log <- ifelse(dat_long$dN_dlogDp_log == "NaN" |
-                                     dat_long$dN_dlogDp_log == "-Inf"  , 0.001, dat_long$dN_dlogDp_log)
-
 
   # interpolate between the  values for a smoother contour
   # this takes a moment or two...
 
   # interpolate the log values
-  message("Update: interpolating the data to give a smooth contour...")
-  # split into small pieces, interp, then recombine
 
-  # how many rows in each diameter class?
-  # We need at least two unique diameter values to interpolate
-  unique_diameter_values <- 5 # must be more than 2
-  n <-  as.data.frame(table(dat_long$Diameter))[1,2] * unique_diameter_values
-  chunks_of_n_rows <- split(dat_long, (seq(nrow(dat_long))-1) %/% n)
-  interp_output <- vector("list", length = length(chunks_of_n_rows))
-  # clear memory
-  invisible(gc())
-  # interpolate chunk by chunk
-  for(i in seq_len(length(chunks_of_n_rows))){
-    print(paste0("Interpolating chunk ",
-                 i,
-                 " of ",
-                 length(chunks_of_n_rows), " chunks..."))
+  # split into small pieces, like time slices, interp, then recombine
 
-    x1 <- chunks_of_n_rows[[i]]
-    xo <- with(x1, seq(min(Time), max(Time), interval_in_seconds))
-    yo <- with(x1, seq(min(Diameter), max(Diameter), interval_diameter))
-    x2 <- with(x1, akima::interp(Time, Diameter, dN_dlogDp_log, xo = xo, yo = yo) )
-    x3 <-  data.frame(matrix(data = x2$z,
-                             ncol = length(x2$y),
-                             nrow = length(x2$x)))
-    names(x3) <- x2$y
-    x3$Time <- as.POSIXct(x2$x, origin = "1970-01-01")
-    interp_output[[i]] <- x3
-    invisible(gc())
+  # identify what times have NA values
+  na <- ifelse(complete.cases(dat),
+               ifelse(  dat$X14.6 > 0 &
+                          dat$X15.1 > 0 &
+                          dat$X15.7 > 0 &
+                          dat$X16.3 > 0, "ok",
+                        "not ok"), "not ok")
+  # find length of runs that are ok and not ok
+  runs <- rle(na)
+  ends <- cumsum(runs$lengths) + 1
+  ends[length(ends)] <- ends[length(ends)] -1
+  starts <- c(1, cumsum(runs$lengths))
+  runs_summary <- data.frame(cbind(starts = starts[-length(starts)],
+                                   ends),
+                             runs$values)
+  # so we only take the rows that are ok, and interpolate on them
+  # separately, then put them back together, leaving gaps between them
+
+  can_take_these_rows <-  runs_summary[runs_summary$runs.values == "ok", ]
+
+  list_of_sections <- vector("list", nrow(can_take_these_rows))
+
+
+  # select rows that are ok
+  for(i in 1:nrow(can_take_these_rows)){
+    list_of_sections[[i]] <- na.omit(dat[can_take_these_rows$starts[i]:
+                                           can_take_these_rows$ends[i], ])
 
   }
 
-  # combine pieces into one big df, too many time columns!
-  .time <- interp_output[[1]]$Time
-  dat_interp_log_df <- do.call("cbind", interp_output)
-  dat_interp_log_df[, names(dat_interp_log_df) == "Time"] <- NULL
-  dat_interp_log_df$Time <- .time
 
+  ### loop to convert each df of good rows to long format
+
+  list_of_sections_long <- vector("list", length(list_of_sections))
+
+  message("Update: converting data from wide to long format...")
+  for(i in 1:length(list_of_sections)){
+
+    # melt the wide data into long format
+    # see http://www.cookbook-r.com/Manipulating_data/Converting_data_between_wide_and_long_format/
+
+    list_of_sections_long[[i]] <-
+      tidyr::gather(list_of_sections[[i]],
+                    "Diameter",
+                    "dN_dlogDp",
+                    2:max(cols))
+
+
+
+    # we want diameter as a numeric
+    list_of_sections_long[[i]]$Diameter <-
+      as.numeric(gsub("X",
+                      "",
+                      list_of_sections_long[[i]]$Diameter ))
+
+    # we want time as a date-formatted variable
+    x <-  as.character(list_of_sections_long[[i]]$Time)
+    date_ <- as.Date(x, format = "%d/%m/%Y")
+    time_ <- gsub(" ", "", substr(x, nchar(x) - 4, nchar(x)))
+    list_of_sections_long[[i]]$Time <- as.POSIXct(paste0(date_, " ", time_))
+
+    # The Igor plot seems to use log dN_dlogDp values, so let's get those
+    list_of_sections_long[[i]]$dN_dlogDp_log <-
+      log10(list_of_sections_long[[i]]$dN_dlogDp)
+
+    list_of_sections_long[[i]]$dN_dlogDp_log <-
+      ifelse(list_of_sections_long[[i]]$dN_dlogDp_log == "NaN" |
+               list_of_sections_long[[i]]$dN_dlogDp_log == "-Inf"  ,
+             0.001, list_of_sections_long[[i]]$dN_dlogDp_log)
+
+    invisible(gc())
+  }
+  message("Update: wide to long format conversion complete...")
+
+  message(paste0("Update: the data has ", nrow(can_take_these_rows),
+                 " runs of consequtive measurements. I will interpolate each run separately..."))
+  # loop to interpolate each good section of data
+  invisible(gc())
+  list_of_sections_long_interp <- vector("list", length(list_of_sections_long))
+
+
+  message("Update: preparing to interpolate...")
+  for(i in 1:length(list_of_sections_long)) {
+    message(paste0("Update: now working on run ", i, " ..."))
+
+    # how many rows in each diameter class?
+    # We need at least two unique diameter values to interpolate
+    unique_diameter_values <- unique_diameter_values # must be more than 2
+
+    n <-  as.data.frame(table(list_of_sections_long[[i]]$Diameter))[1,2] *
+      unique_diameter_values
+
+    chunks_of_n_rows <- split(list_of_sections_long[[i]],
+                              (seq(nrow(list_of_sections_long[[i]]))-1) %/% n)
+
+    # clear memory
+    invisible(gc())
+
+    message(paste0("Update: run ", i, " will be divided into ", length(chunks_of_n_rows), " chunks for interpolation..."))
+
+    # interpolate chunk by chunk within a good section
+    interp_output <-  vector("list", length(chunks_of_n_rows))
+
+    for(j in seq_len(length(chunks_of_n_rows))){
+      print(paste0("Update: Interpolating chunk ",
+                   j,
+                   " of ",
+                   length(chunks_of_n_rows), " chunks..."))
+
+      x1 <- chunks_of_n_rows[[j]]
+      xo <- with(x1, seq(min(Time), max(Time), interval_in_seconds))
+      yo <- with(x1, seq(min(Diameter), max(Diameter), interval_diameter))
+      x2 <- with(x1, akima::interp(Time,
+                                   Diameter,
+                                   dN_dlogDp_log,
+                                   xo = xo,
+                                   yo = yo) )
+      x3 <-  data.frame(matrix(data = x2$z,
+                               ncol = length(x2$y),
+                               nrow = length(x2$x)))
+      names(x3) <- x2$y
+      x3$Time <- as.POSIXct(x2$x, origin = "1970-01-01")
+      interp_output[[j]] <- x3
+      invisible(gc())
+
+    }
+
+    # combine pieces into one big df, too many time columns!
+    .time <- interp_output[[1]]$Time
+    dat_interp_log_df <- do.call("cbind", interp_output)
+    dat_interp_log_df[, names(dat_interp_log_df) == "Time"] <- NULL
+    dat_interp_log_df$Time <- .time
+
+    list_of_sections_long_interp[[i]] <- dat_interp_log_df
+  }
+
+  dat_interp_log_df <- do.call("rbind", list_of_sections_long_interp)
+  .time <- dat_interp_log_df$Time
   message("Update: interpolation complete.")
 
   # wide to long
   dat_interp_log_df_long <- tidyr::gather(dat_interp_log_df, "Diameter", "dN_dlogDp_log", 1:(ncol(dat_interp_log_df)-1))
   dat_interp_log_df_long$Diameter <- as.numeric(as.character(dat_interp_log_df_long$Diameter))
 
-
+  message("Update: Data preparation complete.")
   return(dat_interp_log_df_long)
-  message("Data preparation complete.")
 
 }
+
 
 
 #' @title Plot the data
@@ -215,12 +297,11 @@ smps_plot <- function(the_prepared_data,
 
     the_plot <- ggplot(data_to_plot, aes(y = Diameter,
                                          x = Time)) +
-      #testing
       geom_rect(aes(xmin=xmin, xmax=xmax,
                     ymin=ymin, ymax=ymax,
                     fill = dN_dlogDp_log))  +
       # geom_raster(interpolate = TRUE,
-      #             aes(fill = dN_dlogDp_log))  +
+      #              aes(fill = dN_dlogDp_log))  +
       scale_fill_gradientn(name = expression(dN/dlogD[p]~cm^-3),
                            colours = colour_ramp(100),
                            labels = fill_scale_labels) +
