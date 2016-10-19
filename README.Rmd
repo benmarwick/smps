@@ -77,6 +77,18 @@ smps_plot(prepared_data,
           h = '3 hours')
 ```
 
+And we can adjust the ticks on the time axis:
+
+```{r onedayonehour}
+library(ggplot2) # so we can use theme()
+smps_plot(prepared_data, 
+          day = "2013-01-26", 
+          aspect_ratio = 1/2, 
+          h = '1 hour') +
+  theme(text = element_text(size = 12),
+        axis.text.x = element_text(angle=90, hjust=1)) 
+```
+
 We can customise a variety of options, including the colour ramp:
 
 ```{r options}
