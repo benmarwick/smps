@@ -5,7 +5,7 @@
 \title{Prepare the data}
 \usage{
 prepare_data(the_data, cols = 1:ncol(the_data), interval_in_seconds = 200,
-  interval_diameter = 0.75)
+  interval_diameter = 0.75, unique_diameter_values = 5)
 }
 \arguments{
 \item{the_data}{data frame with rows as date-time, columns as particle sizes. The first column (and only the first column) must contain date-time values.}
@@ -15,5 +15,7 @@ prepare_data(the_data, cols = 1:ncol(the_data), interval_in_seconds = 200,
 \item{interval_in_seconds}{interval to use when interpolating. Default is 200, higher is faster, but lower resolution on the plot}
 
 \item{interval_diameter}{interval to use when interpolating. Default is 0.75, higher is faster, but lower resolution on the plot}
+
+\item{unique_diameter_values}{how many unique diamater values to include in each interpolation chunk. Default is 5.}
 }
 
