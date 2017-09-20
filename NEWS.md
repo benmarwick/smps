@@ -1,3 +1,7 @@
+# smps 0.2.1
+
+* add legend_title arg to smps_plot()
+
 # smps 0.2.0
 
 * update data prep function to handle missing data gracefully, no need to remove rows with zeros or NAs before sending to `prepare_data()`

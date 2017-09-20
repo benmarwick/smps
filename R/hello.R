@@ -200,6 +200,7 @@ prepare_data <- function(the_data,
 #' @param colour_ramp colour scale to use for the contour
 #' @param y_axis 'linear' or 'log' (base 10) y-axis
 #' @param days the date of a single day, to limit the plot to one day or more days. Use the form "2013-01-26" with quotation marks, or make a vector with `c("2013-01-26", "2013-01-27")`
+#' @param legend_title expression or quoted character string to set the legend title
 #' @param ... so you can send other things to modify the theme and scales
 #' @export
 #' @import ggplot2
@@ -216,6 +217,7 @@ smps_plot <- function(the_prepared_data,
                       y_axis = 'linear',
                       seconds_offset = 1000,
                       days = NULL,
+                      legend_title = expression(dN/dlogD[p]~cm^-3),
                       ...) {
 
 
@@ -302,7 +304,7 @@ smps_plot <- function(the_prepared_data,
                     fill = dN_dlogDp_log))  +
       # geom_raster(interpolate = TRUE,
       #              aes(fill = dN_dlogDp_log))  +
-      scale_fill_gradientn(name = expression(dN/dlogD[p]~cm^-3),
+      scale_fill_gradientn(name = legend_title,
                            colours = colour_ramp(100),
                            labels = fill_scale_labels) +
       scale_y_continuous(expand = c(0,0),
@@ -344,7 +346,7 @@ smps_plot <- function(the_prepared_data,
         geom_rect(aes(xmin=xmin, xmax=xmax,
                   ymin=ymin, ymax=ymax,
                   fill = dN_dlogDp_log))  +
-        scale_fill_gradientn(name = expression(dN/dlogD[p]~cm^-3),
+        scale_fill_gradientn(name = legend_title,
                              colours = colour_ramp(100),
                              labels = fill_scale_labels,
                              ...)  +

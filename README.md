@@ -39,15 +39,45 @@ Second, prepare your data for plotting using the `prepare_data` function. This c
 ``` r
 # prepare the data
 prepared_data <- prepare_data(my_data)
+#> [1] "Update: Interpolating chunk 1 of 22 chunks..."
+#> [1] "Update: Interpolating chunk 2 of 22 chunks..."
+#> [1] "Update: Interpolating chunk 3 of 22 chunks..."
+#> [1] "Update: Interpolating chunk 4 of 22 chunks..."
+#> [1] "Update: Interpolating chunk 5 of 22 chunks..."
+#> [1] "Update: Interpolating chunk 6 of 22 chunks..."
+#> [1] "Update: Interpolating chunk 7 of 22 chunks..."
+#> [1] "Update: Interpolating chunk 8 of 22 chunks..."
+#> [1] "Update: Interpolating chunk 9 of 22 chunks..."
+#> [1] "Update: Interpolating chunk 10 of 22 chunks..."
+#> [1] "Update: Interpolating chunk 11 of 22 chunks..."
+#> [1] "Update: Interpolating chunk 12 of 22 chunks..."
+#> [1] "Update: Interpolating chunk 13 of 22 chunks..."
+#> [1] "Update: Interpolating chunk 14 of 22 chunks..."
+#> [1] "Update: Interpolating chunk 15 of 22 chunks..."
+#> [1] "Update: Interpolating chunk 16 of 22 chunks..."
+#> [1] "Update: Interpolating chunk 17 of 22 chunks..."
+#> [1] "Update: Interpolating chunk 18 of 22 chunks..."
+#> [1] "Update: Interpolating chunk 19 of 22 chunks..."
+#> [1] "Update: Interpolating chunk 20 of 22 chunks..."
+#> [1] "Update: Interpolating chunk 21 of 22 chunks..."
+#> [1] "Update: Interpolating chunk 22 of 22 chunks..."
 ```
 
 Third, plot the data, like so:
 
 ``` r
-smps_plot(prepared_data)
+smps_plot(prepared_data) 
 ```
 
-![](figures/README-prep-1.png)<!-- -->
+![](figures/README-prep-1.png)
+
+We can change the legend title, if you have a different input dataset (here it's the same, just for demonstration purposes):
+
+``` r
+smps_plot(prepared_data, legend_title = "particle mass (g)") 
+```
+
+![](figures/README-legend-1.png)
 
 We can also have a log scale on the y-axis:
 
@@ -55,7 +85,7 @@ We can also have a log scale on the y-axis:
 smps_plot(prepared_data, y_axis = "log")
 ```
 
-![](figures/README-log-1.png)<!-- -->
+![](figures/README-log-1.png)
 
 We can plot a data from a single day:
 
@@ -66,7 +96,21 @@ smps_plot(prepared_data,
           h = '3 hours')
 ```
 
-![](figures/README-oneday-1.png)<!-- -->
+![](figures/README-oneday-1.png)
+
+And we can adjust the ticks on the time axis:
+
+``` r
+library(ggplot2) # so we can use theme()
+smps_plot(prepared_data, 
+          day = "2013-01-26", 
+          aspect_ratio = 1/2, 
+          h = '1 hour') +
+  theme(text = element_text(size = 12),
+        axis.text.x = element_text(angle=90, hjust=1)) 
+```
+
+![](figures/README-onedayonehour-1.png)
 
 We can customise a variety of options, including the colour ramp:
 
@@ -80,7 +124,7 @@ smps_plot(prepared_data,
           colour_ramp = viridis) 
 ```
 
-![](figures/README-options-1.png)<!-- -->
+![](figures/README-options-1.png)
 
 Because the output is a ggplot object, we can add typical ggplot elements to it like a regular `ggplot()` call:
 
@@ -91,7 +135,7 @@ smps_plot(prepared_data, font_size = 8) +
   theme(legend.key.size = unit(0.1, "in"))
 ```
 
-![](figures/README-ggpl-1.png)<!-- -->
+![](figures/README-ggpl-1.png)
 
 With `gridExtra` we can stack a few plots together, and arrange a common legend to the side:
 
@@ -120,6 +164,6 @@ grid.arrange(the_plots[[1]],
              layout_matrix = rbind(c(1,1,4),c(2,2,4),c(3,3,4)))
 ```
 
-![](figures/README-combine-1.png)<!-- -->
+![](figures/README-combine-1.png)
 
 Please note that this project is released with a [Guide to Contributing](CONTRIBUTING.md) and a [Contributor Code of Conduct](CONDUCT.md). By participating in this project you agree to abide by its terms.

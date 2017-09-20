@@ -1,7 +1,7 @@
 Package: smps
 Type: Package
 Title: Plots Scanning Mobility Particle Sizer Spectrometer (SMPS) data
-Version: 0.2.1
+Version: 0.2.2
 Author: Ben Marwick and Doreena Doreena Dominick
 Maintainer: Ben Marwick <benmarwick@gmail.com>
 Description: Plots Scanning Mobility Particle Sizer Spectrometer (SMPS) data.
