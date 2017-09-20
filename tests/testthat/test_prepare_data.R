@@ -14,6 +14,9 @@ structure(list(Time = structure(c(1359187200, 1359187400, 1359187600,
                                                        4.49202348842896, 4.51399838890342, 4.53597328937789)), .Names = c("Time",
                                                                                                                           "Diameter", "dN_dlogDp_log"), row.names = c(NA, 6L), class = "data.frame")
 
+expected <- expected[ , -1]
+prepared_data <- prepared_data[, -1]
+
 test_that("prepare_data can work", {
   expect_equal(head(prepared_data), expected)
 })
