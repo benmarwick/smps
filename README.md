@@ -74,7 +74,7 @@ smps_plot(prepared_data)
 We can change the legend title, if you have a different input dataset (here it's the same, just for demonstration purposes):
 
 ``` r
-smps_plot(prepared_data, legend_title = "particle mass (g)") 
+smps_plot(prepared_data, legend_title = expression(particle~mass~(μg~m^-3)))
 ```
 
 ![](figures/README-legend-1.png)

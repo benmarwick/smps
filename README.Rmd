@@ -65,10 +65,10 @@ smps_plot(prepared_data)
 We can change the legend title, if you have a different input dataset (here it's the same, just for demonstration purposes):
 
 ```{r legend}
-smps_plot(prepared_data, legend_title = "particle mass (g)") 
+smps_plot(prepared_data, legend_title = expression(particle~mass~(μg~m^-3)))
 ```
 
-We can also have a log scale on the y-axis:
+We can also have a log scale on the y-axis:  
 
 ```{r log}
 smps_plot(prepared_data, y_axis = "log")
