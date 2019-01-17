@@ -37,11 +37,7 @@ prepare_data <- function(the_data,
 
   # identify what times have NA values
   na <- ifelse(complete.cases(dat),
-               ifelse(  dat$X14.6 > 0 &
-                          dat$X15.1 > 0 &
-                          dat$X15.7 > 0 &
-                          dat$X16.3 > 0, "ok",
-                        "not ok"), "not ok")
+                "ok", "not ok")
   # find length of runs that are ok and not ok
   runs <- rle(na)
   ends <- cumsum(runs$lengths) + 1
