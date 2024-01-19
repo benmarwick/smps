@@ -1,4 +1,6 @@
 
+This package is no longer maintained and we are not supporting users. If you would like to take over as maintainer, please contact us using the contact information in the DESCRIPTION file. 
+
 SMPS
 ====
 
